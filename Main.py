@@ -15,29 +15,36 @@ def xmlToDict():
     return xmltodict.parse(my_xml)
 
 
-def translateFile():
-    tree = ET.parse('strings.xml')
-    root = tree.getroot()
-    for child in root:
-        if child.tag == "string":
-            child.text = translateText(child.text)
-    tree.write("boom.xml", encoding='utf-8')
+def validateLanguage(language):
+    os.environ[
+        'GOOGLE_APPLICATION_CREDENTIALS'] = "/Users/arya564/Desktop/Pycharm/FirstPythonProject/GoogleCloudKey_MyServiceAcct.json"
+
+    translate_client = translate.Client()
+    supportedLanguages = translate_client.get_languages()
+
+    codeList = []
+
+    for language_dict in supportedLanguages:
+        codeList.append(language_dict['language'])
+
+    if language in codeList:
+        return True
+
+    return False
 
 
-def translateText(text):
+# so this outputs into a dictionary with all of the values
+# print(output)
+def translateText(text, language):
     os.environ[
         'GOOGLE_APPLICATION_CREDENTIALS'] = "/Users/arya564/Desktop/Pycharm/FirstPythonProject/GoogleCloudKey_MyServiceAcct.json"
 
     translate_client = translate.Client()
 
-    target = 'es'
     output = translate_client.translate(
         text,
-        target
+        language
     )
-
-    # so this outputs into a dictionary with all of the values
-    # print(output)
 
     result = ''
 
@@ -49,9 +56,21 @@ def translateText(text):
     return result
 
 
+def translateFile(language : str):
+    if (validateLanguage(language)):
+        fileBase = "/strings.xml"
+        languageFile = language + fileBase
+        tree = ET.parse('strings.xml')
+        root = tree.getroot()
+        for child in root:
+            if child.tag == "string":
+                child.text = translateText(child.text, language)
+
+        tree.write("output.xml", encoding='utf-8')
+
+
 def main():
     translateFile()
-    # translateText('Good Morning')
 
 
 # Using the special variable
