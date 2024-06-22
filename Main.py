@@ -3,6 +3,7 @@ import os
 from google.cloud import translate_v2 as translate
 import xmltodict
 import pprint
+import sys
 
 
 def xmlToDict():
@@ -56,10 +57,10 @@ def translateText(text, language):
     return result
 
 
-def translateFile(language : str):
-    if (validateLanguage(language)):
-        fileBase = "/strings.xml"
-        languageFile = language + fileBase
+def translateFile(language: str):
+    if validateLanguage(language):
+        file_base = "/strings.xml"
+        language_file = language + file_base
         tree = ET.parse('strings.xml')
         root = tree.getroot()
         for child in root:
@@ -70,13 +71,26 @@ def translateFile(language : str):
 
 
 def main():
-    translateFile()
+    arg1 = sys.argv[1]
+    translateFile(arg1)
+    # translateFile('es')
 
 
 # Using the special variable
 # __name__
 if __name__ == "__main__":
     main()
+
+
+'''
+THINGS TO DO:
+- need to ask for user input
+- figure out how to do this from the command line
+- figure out locale stuff (hebrew, viet, mandarin chinese)
+- apk file with api key encryption???
+'''
+
+
 
 # # this creates a new element that has root as the tag name
 # # PARENT ELEMENT
